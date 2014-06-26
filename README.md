@@ -6,6 +6,16 @@ As S3FixedWindowRollingPolicy extends FixedWindowRollingPolicy, it works exactly
 
 logback-s3 is implemented based on Logpic (https://github.com/mweagle/Logpig) but simplified for my needs.
 
+Configuration logback.xml
+----------
+If awsAccessKey or awsSecretKey are not set, Logback will create a AmazonS3Client with no parameters to look for credentials in the following places:
+                                                                                                                               
+1. In the environment variables AWS_ACCESS_KEY_ID and AWS_SECRET_KEY.
+2. In the Java system properties aws.accessKeyId and aws.secretKey.
+3. From the Instance Metadata Service (IMDS). The IMDS is what provides credentials using the IAM role contained in the EC2 instance profile.                                                                                                                               
+
+
+
 Example logback.xml
 ----------
 An example logback.xml that uses `S3FixedWindowRollingPolicy` with `RollingFileAppender`.
@@ -23,13 +33,13 @@ An example logback.xml that uses `S3FixedWindowRollingPolicy` with `RollingFileA
     * When <rollingOnExit> is true, log rolling occurs on JVM exit and a rolled log is uploaded (default)
     * When <rollingOnExit> is false, the active log file is uploaded as it is
   -->
+
   <rollingPolicy class="ch.qos.logback.core.rolling.S3FixedWindowRollingPolicy">
     <fileNamePattern>/var/log/myapp.log.%i.gz</fileNamePattern>
         <awsAccessKey>accesskey</awsAccessKey>
         <awsSecretKey>secretkey</awsSecretKey>
         <s3BucketName>com.mybucket</s3BucketName>
         <s3FolderName>log</s3FolderName>
-
         <rollingOnExit>true</rollingOnExit>
     </rollingPolicy>
 
