@@ -1,6 +1,7 @@
 package ch.qos.logback.core.rolling;
 
 
+import ch.qos.logback.core.rolling.helper.CompressionMode;
 import ch.qos.logback.core.rolling.helper.RenameUtil;
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.BasicAWSCredentials;
@@ -65,6 +66,11 @@ public class S3TimeBasedRollingPolicy extends TimeBasedRollingPolicy {
     Future future = asyncCompress(tmpTarget, nameOfCompressedFile, innerEntryName);
     try {
       future.get(5, TimeUnit.SECONDS);
+      if (getCompressionMode() == CompressionMode.GZ && !nameOfCompressedFile.endsWith(".gz")) {
+        nameOfCompressedFile = nameOfCompressedFile + ".gz";
+      } else if (getCompressionMode() == CompressionMode.ZIP && !nameOfCompressedFile.endsWith(".zip")) {
+        nameOfCompressedFile = nameOfCompressedFile + ".zip";
+      }
       uploadFileToS3Async(nameOfCompressedFile);
     } catch (TimeoutException e) {
       addError("Timeout while waiting for compression job to finish", e);
