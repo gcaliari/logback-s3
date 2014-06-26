@@ -10,10 +10,10 @@ import java.io.File;
 import java.util.concurrent.*;
 
 /**
- * Extension of FixedWindowRollingPolicy.
+ * Extension of TimeBasedRollingPolicy.
  * <p/>
  * On each rolling event (which is defined by <triggeringPolicy>), this policy does:
- * 1. Regular log file rolling as FixedWindowsRollingPolicy does
+ * 1. Regular log file rolling as TimeBasedRollingPolicy does but synchronously
  * 2. Upload the rolled log file to S3 bucket
  * <p/>
  * Also, this policy uploads the active log file on JVM exit. If rollingOnExit is true,
