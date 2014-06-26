@@ -39,8 +39,12 @@ public class S3FixedWindowRollingPolicy extends FixedWindowRollingPolicy {
 
   protected AmazonS3Client getS3Client() {
     if (s3Client == null) {
-      AWSCredentials cred = new BasicAWSCredentials(getAwsAccessKey(), getAwsSecretKey());
-      s3Client = new AmazonS3Client(cred);
+      if(getAwsAccessKey() == null || getAwsSecretKey() == null){
+        s3Client = new AmazonS3Client();
+      } else {
+        AWSCredentials cred = new BasicAWSCredentials(getAwsAccessKey(), getAwsSecretKey());
+        s3Client = new AmazonS3Client(cred);
+      }
     }
     return s3Client;
   }
