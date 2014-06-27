@@ -63,16 +63,16 @@ public class S3TimeBasedRollingPolicy extends TimeBasedRollingPolicy {
     String parentsRawFile = getParentsRawFileProperty();
     String tmpTarget = parentsRawFile + System.nanoTime() + ".tmp";
     renameUtil.rename(parentsRawFile, tmpTarget);
+    if (getCompressionMode() == CompressionMode.GZ){
+      if(nameOfCompressedFile.endsWith(".gz")) nameOfCompressedFile = nameOfCompressedFile.substring(0, nameOfCompressedFile.lastIndexOf(".gz"));
+      nameOfCompressedFile = nameOfCompressedFile + compressedFileNameSufix() + ".gz";
+    } else if (getCompressionMode() == CompressionMode.ZIP) {
+      if(nameOfCompressedFile.endsWith(".zip")) nameOfCompressedFile = nameOfCompressedFile.substring(0, nameOfCompressedFile.lastIndexOf(".zip"));
+      nameOfCompressedFile = nameOfCompressedFile + compressedFileNameSufix() + ".zip";
+    }
     Future future = asyncCompress(tmpTarget, nameOfCompressedFile, innerEntryName);
     try {
       future.get(5, TimeUnit.SECONDS);
-      if (getCompressionMode() == CompressionMode.GZ){
-        if(nameOfCompressedFile.endsWith(".gz")) nameOfCompressedFile = nameOfCompressedFile.substring(0, nameOfCompressedFile.lastIndexOf(".gz"));
-        nameOfCompressedFile = nameOfCompressedFile + compressedFileNameSufix() + ".gz";
-      } else if (getCompressionMode() == CompressionMode.ZIP) {
-        if(nameOfCompressedFile.endsWith(".zip")) nameOfCompressedFile = nameOfCompressedFile.substring(0, nameOfCompressedFile.lastIndexOf(".zip"));
-        nameOfCompressedFile = nameOfCompressedFile + compressedFileNameSufix() + ".zip";
-      }
       uploadFileToS3Async(nameOfCompressedFile);
     } catch (TimeoutException e) {
       addError("Timeout while waiting for compression job to finish", e);
