@@ -177,5 +177,5 @@ public class S3TimeBasedRollingPolicy extends TimeBasedRollingPolicy {
     this.rollingOnExit = rollingOnExit;
   }
 
-  private String compressedFileNameSufix(){ return ""; }
+  protected String compressedFileNameSufix(){ return ""; }
 }
