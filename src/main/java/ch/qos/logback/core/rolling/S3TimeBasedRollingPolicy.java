@@ -66,10 +66,12 @@ public class S3TimeBasedRollingPolicy extends TimeBasedRollingPolicy {
     Future future = asyncCompress(tmpTarget, nameOfCompressedFile, innerEntryName);
     try {
       future.get(5, TimeUnit.SECONDS);
-      if (getCompressionMode() == CompressionMode.GZ && !nameOfCompressedFile.endsWith(".gz")) {
-        nameOfCompressedFile = nameOfCompressedFile + ".gz";
-      } else if (getCompressionMode() == CompressionMode.ZIP && !nameOfCompressedFile.endsWith(".zip")) {
-        nameOfCompressedFile = nameOfCompressedFile + ".zip";
+      if (getCompressionMode() == CompressionMode.GZ){
+        if(nameOfCompressedFile.endsWith(".gz")) nameOfCompressedFile = nameOfCompressedFile.substring(0, nameOfCompressedFile.lastIndexOf(".gz"));
+        nameOfCompressedFile = nameOfCompressedFile + compressedFileNameSufix() + ".gz";
+      } else if (getCompressionMode() == CompressionMode.ZIP) {
+        if(nameOfCompressedFile.endsWith(".zip")) nameOfCompressedFile = nameOfCompressedFile.substring(0, nameOfCompressedFile.lastIndexOf(".zip"));
+        nameOfCompressedFile = nameOfCompressedFile + compressedFileNameSufix() + ".zip";
       }
       uploadFileToS3Async(nameOfCompressedFile);
     } catch (TimeoutException e) {
@@ -175,4 +177,5 @@ public class S3TimeBasedRollingPolicy extends TimeBasedRollingPolicy {
     this.rollingOnExit = rollingOnExit;
   }
 
+  private String compressedFileNameSufix(){ return ""; }
 }

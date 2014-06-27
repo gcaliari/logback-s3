@@ -14,6 +14,7 @@ If awsAccessKey or awsSecretKey are not set, Logback will create a AmazonS3Clien
 2. In the Java system properties aws.accessKeyId and aws.secretKey.
 3. From the Instance Metadata Service (IMDS). The IMDS is what provides credentials using the IAM role contained in the EC2 instance profile.                                                                                                                               
 
+Override compressedFileNameSufix if you you want to add a sufix to the compressed file name
 
 
 Example logback.xml
